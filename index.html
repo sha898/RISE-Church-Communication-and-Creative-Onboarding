@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Communications & Creative Onboarding Hub — Rise Church</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<!-- Canvas Confetti CDN -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+          serif: ['Fraunces', 'serif'],
+        },
+        colors: {
+          paper: {
+            light: '#F8F6F0',
+            dark: '#121418',
+            cardLight: '#FFFFFF',
+            cardDark: '#1C2027',
+          }
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  body {
+    background-image: radial-gradient(circle at 1px 1px, rgba(150, 150, 150, 0.15) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+
+  .dark body {
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.07) 1px, transparent 0);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(150, 150, 150, 0.3);
+    border-radius: 99px;
+  }
+
+  @media print {
+    .no-print { display: none !important; }
+    body { background: white !important; color: black !important; }
+  }
+</style>
+</head>
+
+<body class="bg-paper-light dark:bg-paper-dark text-slate-800 dark:text-slate-100 font-sans min-h-full flex flex-col transition-colors duration-200">
+
+  <!-- Navigation Header -->
+  <header class="no-print sticky top-0 z-40 bg-white/80 dark:bg-[#181B20]/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-slate-900 dark:bg-amber-500 text-amber-400 dark:text-slate-950 flex items-center justify-center font-serif text-xl font-bold shadow-sm">
+          R
+        </div>
+        <div>
+          <h1 class="font-serif font-bold text-lg sm:text-xl leading-tight text-slate-900 dark:text-white">Rise Church</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Comms & Creative Onboarding Hub</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <nav class="flex bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl text-xs sm:text-sm font-semibold">
+          <button id="tabChecklistBtn" onclick="switchTab('checklist')" class="px-3 sm:px-4 py-1.5 rounded-lg transition-all text-slate-900 dark:text-white bg-white dark:bg-slate-700 shadow-sm">
+            <i class="fa-solid fa-list-check mr-1.5"></i> Checklist
+          </button>
+          <button id="tabOverviewBtn" onclick="switchTab('overview')" class="px-3 sm:px-4 py-1.5 rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            <i class="fa-solid fa-chart-pie mr-1.5"></i> Dashboard
+          </button>
+        </nav>
+
+        <button id="themeToggleBtn" onclick="toggleDarkMode()" title="Toggle Theme" class="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+          <i id="themeIcon" class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+    <!-- CHECKLIST VIEW -->
+    <div id="checklistView" class="space-y-6">
+      
+      <!-- Role Picker & Info Card -->
+      <div class="bg-white dark:bg-paper-cardDark border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden transition-all">
+        <div id="roleAccentBar" class="absolute top-0 left-0 right-0 h-1.5 bg-slate-800 transition-colors"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+          
+          <div class="md:col-span-7 space-y-3">
+            <div class="flex items-center justify-between">
+              <label for="roleSelect" class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Building the checklist for
+              </label>
+              <span id="roleBranchBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                Leadership
+              </span>
+            </div>
+
+            <div class="relative">
+              <select id="roleSelect" onchange="handleRoleChange(this.value)" class="w-full text-base sm:text-lg font-bold bg-slate-50 dark:bg-slate-800/80 text-slate-900 dark:text-white border-2 border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 appearance-none focus:outline-none focus:border-slate-900 dark:focus:border-amber-500 transition cursor-pointer pr-10">
+              </select>
+              <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 pt-1">
+              <div><span class="text-slate-400">Tier:</span> <b id="tierLabel" class="text-slate-800 dark:text-slate-200">Pastor</b></div>
+              <div><span class="text-slate-400">Reports To:</span> <b id="reportsTo" class="text-slate-800 dark:text-slate-200">Senior Leadership / Elders</b></div>
+            </div>
+          </div>
+
+          <!-- Team Member Metadata -->
+          <div class="md:col-span-5 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200/60 dark:border-slate-700/60 space-y-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center justify-between">
+              <span>Candidate Information</span>
+              <i class="fa-solid fa-user-gear text-slate-400"></i>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="block text-slate-400 mb-1 font-medium">Team Member Name</label>
+                <input type="text" id="assigneeInput" oninput="saveCandidateInfo()" placeholder="e.g. Alex Morgan" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+              </div>
+              <div>
+                <label class="block text-slate-400 mb-1 font-medium">Start Date</label>
+                <input type="date" id="startDateInput" onchange="saveCandidateInfo()" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Action & Progress Bar Header -->
+      <div class="bg-white dark:bg-paper-cardDark border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="font-serif font-bold text-xl text-slate-900 dark:text-white flex items-center gap-2">
+              <span>Onboarding Progress</span>
+              <span id="completionBadge" class="text-xs font-sans px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">In Progress</span>
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Check off each item as it is completed. Saved locally on this browser.</p>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="openAddTaskModal()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold text-xs transition flex items-center gap-1.5 shadow-xs">
+              <i class="fa-solid fa-plus"></i> Add Custom Task
+            </button>
+            <button onclick="copyFormattedSummary()" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium text-xs transition flex items-center gap-1.5">
+              <i class="fa-solid fa-copy"></i> Copy Summary
+            </button>
+            <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium text-xs transition flex items-center gap-1.5">
+              <i class="fa-solid fa-print"></i> Print
+            </button>
+            <button onclick="confirmResetRole()" class="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 text-rose-600 dark:text-rose-400 font-medium text-xs transition flex items-center gap-1.5">
+              <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs font-bold">
+            <span class="text-slate-500 dark:text-slate-400">Total Completion</span>
+            <span id="progressCount" class="text-amber-600 dark:text-amber-400">0 of 0 (0%)</span>
+          </div>
+          <div class="w-full h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-200/60 dark:border-slate-700/60">
+            <div id="progressFill" class="h-full bg-slate-900 dark:bg-amber-500 rounded-full transition-all duration-300 w-0"></div>
+          </div>
+        </div>
+
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-100 dark:border-slate-800">
+          <div class="relative w-full sm:w-64">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" id="taskSearchInput" oninput="renderPhases()" placeholder="Search items..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500">
+          </div>
+
+          <div class="flex items-center gap-1 text-xs w-full sm:w-auto justify-end">
+            <span class="text-slate-400 mr-1 font-medium">Filter:</span>
+            <button onclick="setFilter('all')" id="filterAllBtn" class="px-2.5 py-1 rounded-md font-medium transition bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950">All</button>
+            <button onclick="setFilter('pending')" id="filterPendingBtn" class="px-2.5 py-1 rounded-md font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Pending</button>
+            <button onclick="setFilter('completed')" id="filterCompletedBtn" class="px-2.5 py-1 rounded-md font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phases Container -->
+      <div id="phasesContainer" class="space-y-6"></div>
+
+    </div>
+
+    <!-- OVERVIEW DASHBOARD VIEW -->
+    <div id="overviewView" class="hidden space-y-6">
+      
+      <div class="bg-white dark:bg-paper-cardDark border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="font-serif font-bold text-2xl text-slate-900 dark:text-white">Team Onboarding Dashboard</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Readiness metrics across all Communications & Creative department roles.</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="exportAllData()" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition flex items-center gap-2">
+              <i class="fa-solid fa-download"></i> Backup Data (JSON)
+            </button>
+            <label class="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition flex items-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-upload"></i> Restore Data
+              <input type="file" id="importJsonInput" accept=".json" onchange="importAllData(event)" class="hidden">
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+          <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+            <span class="text-xs font-semibold text-slate-400 block">Total Team Roles</span>
+            <span id="statTotalRoles" class="text-2xl font-bold font-serif text-slate-900 dark:text-white">21</span>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+            <span class="text-xs font-semibold text-slate-400 block">Active Onboardings</span>
+            <span id="statActiveCount" class="text-2xl font-bold font-serif text-amber-600 dark:text-amber-400">0</span>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+            <span class="text-xs font-semibold text-slate-400 block">Total Tasks Done</span>
+            <span id="statTotalTasksDone" class="text-2xl font-bold font-serif text-emerald-600 dark:text-emerald-400">0</span>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+            <span class="text-xs font-semibold text-slate-400 block">Overall Dept Completion</span>
+            <span id="statOverallPct" class="text-2xl font-bold font-serif text-indigo-600 dark:text-indigo-400">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Branch Filter -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 dark:border-slate-800">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap mr-2">Branch:</span>
+        <button onclick="filterOverviewBranch('all')" id="ovBranchBtn-all" class="px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950">All Branches</button>
+        <button onclick="filterOverviewBranch('Leadership')" id="ovBranchBtn-Leadership" class="px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Leadership</button>
+        <button onclick="filterOverviewBranch('Communications')" id="ovBranchBtn-Communications" class="px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Communications</button>
+        <button onclick="filterOverviewBranch('Creative')" id="ovBranchBtn-Creative" class="px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Creative</button>
+        <button onclick="filterOverviewBranch('Capture')" id="ovBranchBtn-Capture" class="px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Capture</button>
+        <button onclick="filterOverviewBranch('Online')" id="ovBranchBtn-Online" class="px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Online</button>
+      </div>
+
+      <div id="overviewCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+    </div>
+
+  </main>
+
+  <footer class="no-print mt-auto py-8 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xs text-center text-xs text-slate-500 dark:text-slate-400">
+    <div class="max-w-6xl mx-auto px-4 space-y-1">
+      <p class="font-semibold text-slate-700 dark:text-slate-300">Rise Church Communications & Creative Ministry</p>
+      <p>Progress is saved automatically to local storage on your device.</p>
+    </div>
+  </footer>
+
+  <!-- Modal: Add Custom Task -->
+  <div id="addTaskModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-paper-cardDark border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-serif font-bold text-lg text-slate-900 dark:text-white">Add Custom Onboarding Item</h3>
+        <button onclick="closeAddTaskModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-500 mb-1">Select Phase</label>
+          <select id="modalPhaseSelect" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 font-semibold"></select>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-500 mb-1">Task Description</label>
+          <textarea id="modalTaskInput" rows="3" placeholder="Enter task details..." class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-amber-500"></textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeAddTaskModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200">Cancel</button>
+        <button onclick="submitCustomTask()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500 text-slate-950 hover:bg-amber-600">Add Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Confirmation Dialog -->
+  <div id="confirmModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-paper-cardDark border border-slate-200 dark:border-slate-800 w-full max-w-sm rounded-2xl p-6 shadow-xl space-y-4 text-center">
+      <div class="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 mx-auto flex items-center justify-center text-xl">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div>
+        <h3 id="confirmModalTitle" class="font-serif font-bold text-lg text-slate-900 dark:text-white">Reset Checklist?</h3>
+        <p id="confirmModalDesc" class="text-xs text-slate-500 dark:text-slate-400 mt-1">This will uncheck all completed items for this role. Notes will be preserved.</p>
+      </div>
+      <div class="flex items-center justify-center gap-2 pt-2">
+        <button onclick="closeConfirmModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200">Cancel</button>
+        <button id="confirmModalActionBtn" class="px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 text-white hover:bg-rose-700">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-xs font-medium border border-slate-700">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+    <span id="toastMsg">Action completed</span>
+  </div>
+
+<script>
+const ROLES = [
+  {"slug":"pastor-of-communications-creative","branch":"Leadership","tier":"Pastor","title":"Pastor of Communications & Creative","reportsTo":"Senior Leadership / Elders","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Prepare the final-approval briefing for major and moderate campaigns"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Meet individually with the Director and each Coordinator","Review the full Communications/Creative org chart and current campaign calendar"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Set the cadence for final approval on major and moderate campaigns","Align the comms/creative calendar with the broader ministry calendar"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own final approval across a full campaign cycle and present vision for the next season"]]]},
+  {"slug":"director","branch":"Leadership","tier":"Director","title":"Director","reportsTo":"Pastor of Communications & Creative","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Gather access to every channel and pull together the brand system, standards doc, and current calendar"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Inherit every channel: website, email, app, print, signage","Meet every Coordinator and learn the team's strengths"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Set the request intake so ministries stop going direct","Set the creative review rhythm and who approves what"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own the full comms and creative calendar and a churchwide campaign"]]]},
+  {"slug":"communications-coordinator","branch":"Communications","tier":"Coordinator","title":"Communications Coordinator","reportsTo":"Director","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Get FlowForth email-build and RISE App/bulletin tool access ready"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Walk the request intake and the weekly announcement flow","Inherit the FlowForth email build and the bulletin process"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Set the proofing and approval steps before anything ships","Map the recurring deadlines across channels"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Run a full week of comms on your own"]]]},
+  {"slug":"web-based-manager","branch":"Communications","tier":"Team Leader","title":"Web Based Manager","reportsTo":"Communications Coordinator","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Get RISE App and website CMS access ready"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Walk the RISE App and website structure and where content lives","Inherit the current data points and update backlog"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Set the recurring update schedule and who approves changes","Audit the RISE App and website for outdated content"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own a full site/app refresh cycle"]]]},
+  {"slug":"web-based-support","branch":"Communications","tier":"Team Member(s)","title":"Web Based Support","reportsTo":"Web Based Manager","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Get RISE App and website editor-level access ready"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Shadow two to three live site/app updates","Learn the update request and approval process"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Take ownership of one small update task","Learn the content organization system in Google Drive"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own one full monthly update cycle"]]]},
+  {"slug":"social-media","branch":"Communications","tier":"Team Leader","title":"Social Media","reportsTo":"Communications Coordinator","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Add their social channel and FlowForth logins to the password manager"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Add channel access through the password manager, no shared logins","Walk the content calendar and the posting cadence"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Hand off the community and DM response policy","Grant analytics access and set the reporting rhythm"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own the calendar and a full series rollout, including email campaigns"]]]},
+  {"slug":"social-media-email-support","branch":"Communications","tier":"Team Member(s)","title":"Social Media & Email Support","reportsTo":"Social Media (Team Leader)","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Get Canva and FlowForth access ready"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Walk the posting schedule and the scheduling tool","Inherit the brand voice and the channel guidelines"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Assist building one full email campaign in FlowForth","Learn the analytics and the weekly recap"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Run a full week of posting and one email send with support"]]]},
+  {"slug":"creative-coordinator","branch":"Creative","tier":"Coordinator","title":"Creative Coordinator","reportsTo":"Director","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Pull together the Canva brand system, standards doc, and current calendar to hand off"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Meet every creative on the team and learn their strengths","Inherit the brand system, standards doc, and current series calendar"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Set the creative review rhythm and who approves what","Audit the team's Canva files and Google Drive asset library"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own the full creative calendar and present the next series vision"]]]},
+  {"slug":"graphic-designer","branch":"Creative","tier":"Team Leader","title":"Graphic Designer","reportsTo":"Creative Coordinator","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Install Canva and load the brand kit and templates"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Share the template library and the brand kit files","Walk the sermon series art process from brief to delivery"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Introduce the print vendor and the file specs they need","Hand off the slide and lower-third templates"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own the art for a full series"]]]},
+  {"slug":"graphic-design-support","branch":"Creative","tier":"Team Member(s)","title":"Graphic Design Support","reportsTo":"Graphic Designer","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Get Canva access to the brand kit and templates"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Shadow one full graphics request from brief to delivery","Learn the file naming and Google Drive folder conventions"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Complete first assigned graphic under review","Learn the sermon graphic turnaround process"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own the art for one full sermon series with support"]]]},
+  {"slug":"special-projects","branch":"Creative","tier":"Team Leader","title":"Special Projects","reportsTo":"Creative Coordinator","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Set up Basecamp project templates for campaigns and events"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Walk the campaign/event planning pipeline: brief, timeline, execution","Inherit the current campaign and event calendar"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Set the process for pulling in Graphic Designer and Print Media support","Map the recurring deadlines across special projects"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own a full campaign or event from plan to execution"]]]},
+  {"slug":"special-projects-support","branch":"Creative","tier":"Team Member(s)","title":"Special Projects Support","reportsTo":"Special Projects (Team Leader)","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Get Basecamp access to current campaign/event boards"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Shadow one full campaign or event planning cycle","Learn the timeline and task-tracking process"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Take ownership of one timeline task","Assist coordinating one design pull-in request"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own one small campaign or event start to finish"]]]},
+  {"slug":"print-media","branch":"Creative","tier":"Team Leader","title":"Print Media","reportsTo":"Creative Coordinator","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Get Canva access and print-ready templates loaded"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Introduce the print vendor and the file specs they need","Walk the print request queue and turnaround process"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Confirm the vendor/printer ordering process","Hand off the print production calendar"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own print production for a full sermon series"]]]},
+  {"slug":"print-media-support","branch":"Creative","tier":"Team Member(s)","title":"Print Media Support","reportsTo":"Print Media (Team Leader)","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Get Canva access to print templates"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Shadow one print production cycle start to finish","Learn the print specs and file requirements"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Assist aligning one physical/digital print piece","Learn the vendor ordering process"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own one small print run start to finish"]]]},
+  {"slug":"capture-team-coordinator","branch":"Capture","tier":"Coordinator","title":"Capture Team Coordinator","reportsTo":"Director","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Set up shared Google Photos albums and Google Drive folder structure"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Inventory the camera gear and the equipment checkout process","Walk the coverage scheduling process for services and events"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Set the equipment checkout and gear-care policy","Build the coverage schedule in Basecamp"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own full capture coverage and equipment management for a season"]]]},
+  {"slug":"capture-team-lead","branch":"Capture","tier":"Team Leader","title":"Capture Team Lead","reportsTo":"Capture Team Coordinator","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Check out a camera kit and prep card and Google Photos archive access"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Inventory the camera gear and check out a kit","Walk the card-to-archive footage workflow in Google Photos"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Hand off the shot list templates and the volunteer camera team","Walk the livestream and multicam setup"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own capture for a weekend service"]]]},
+  {"slug":"photographer-s","branch":"Capture","tier":"Team Member","title":"Photographer(s)","reportsTo":"Capture Team Lead","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Check out a camera kit and Google Photos upload access"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Inventory the camera gear and check out a kit","Walk the upload-to-archive photo workflow"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Shoot one assigned service or event","Learn the handoff process for delivering photos"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own photo capture for a weekend service"]]]},
+  {"slug":"videographer-s","branch":"Capture","tier":"Team Member","title":"Videographer(s)","reportsTo":"Capture Team Lead","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Check out a camera kit and prep card and archive access"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Inventory the camera gear and check out a kit","Walk the card to archive footage workflow"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Hand off the shot list templates and the volunteer camera team","Walk the livestream and multicam setup"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own capture for a weekend service"]]]},
+  {"slug":"online-coordinator","branch":"Online","tier":"Coordinator","title":"Online Coordinator","reportsTo":"Director","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Get streaming platform admin access ready"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Walk the online guest follow-up flow and the streaming setup","Inherit the online platform admin access"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Set the moderation guidelines and escalation process","Map the recurring stream schedule"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Run a full week of online services on your own"]]]},
+  {"slug":"online-host","branch":"Online","tier":"Team Leader","title":"Online Host","reportsTo":"Online Coordinator","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Get streaming platform moderator access ready"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Walk the moderation guidelines and the streaming tool","Inherit the connect-card follow-up process"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Shadow two to three live streams","Lead moderation for one stream independently"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own moderation and guest follow-up for a full month of streams"]]]},
+  {"slug":"additional-online-hosts","branch":"Online","tier":"Team Member(s)","title":"Additional Online Hosts","reportsTo":"Online Host","phases":[["Before Day One",["Run payroll setup and send the offer paperwork","Create their church email and add them to the staff directory","Set up their workstation: computer, monitor, and drives","Install their software and licenses — Canva and any other tools their role needs","Add them to Basecamp, team comms, and the team calendar","Share the Canva brand kit and grant access to the Google Drive asset library","Add the shared account logins they will need to the password manager","Order building access: key fob, parking, alarm code","Assign a point person for their first two weeks","Line up their first project in Basecamp so day one is not idle","Send a welcome note with what to expect on day one","Get streaming platform moderator access ready"]],["The First Week",["Walk the building: stage, green room, offices, storage","Sit down with the pastor on mission, vision, and values","Walk a full Sunday run of show start to finish","Hand off the brand guide: fonts, logos, colors, voice","Show them the approval flow and who says the final yes","Add them to team comms and introduce them in channel","Cover the media and confidentiality policy","Take their photo for the directory and team wall","Shadow the Online Host during a live stream","Learn the connect-card follow-up process"]],["The First Month",["Give them one small project to own end to end in Basecamp","Set a weekly one-on-one rhythm","Talk through why you make what you make — the theology of it","Introduce them across the departments they will work with","Run the first honest feedback check-in","Host one stream shift independently","Learn the community-guideline escalation process"]],["The First 90 Days",["Hand off full ownership of their area","Run the 90-day review against the wins for the role","Set goals for the next quarter together","Own hosting for one full stream series"]]]}
+];
+
+const BRANCH_COLORS = {
+  Leadership: { bar: '#20242C', badgeBg: 'bg-slate-900 text-white dark:bg-slate-700' },
+  Communications: { bar: '#2D6A4F', badgeBg: 'bg-emerald-800 text-white dark:bg-emerald-900/80' },
+  Creative: { bar: '#9A4123', badgeBg: 'bg-orange-800 text-white dark:bg-orange-900/80' },
+  Capture: { bar: '#6B46C1', badgeBg: 'bg-purple-800 text-white dark:bg-purple-900/80' },
+  Online: { bar: '#1D4ED8', badgeBg: 'bg-blue-800 text-white dark:bg-blue-900/80' }
+};
+
+let currentRoleSlug = '';
+let currentRoleObj = null;
+let currentFilter = 'all';
+let collapsedPhases = {};
+let overviewBranchFilter = 'all';
+
+function getRoleStorageKey(slug) {
+  return 'rise_onboard_v2_' + slug;
+}
+
+function loadRoleState(roleObj) {
+  const defaultState = { checked: {}, candidateName: '', startDate: '', customTasks: [], notes: {} };
+  try {
+    const raw = localStorage.getItem(getRoleStorageKey(roleObj.slug));
+    if (raw) return { ...defaultState, ...JSON.parse(raw) };
+  } catch (e) {
+    console.error('Error loading state:', e);
+  }
+  return defaultState;
+}
+
+function saveRoleState(slug, state) {
+  try {
+    localStorage.setItem(getRoleStorageKey(slug), JSON.stringify(state));
+  } catch (e) {
+    console.error('Error saving state:', e);
+  }
+}
+
+function initApp() {
+  populateRoleDropdown();
+  setupTheme();
+  
+  let savedRole = null;
+  try { savedRole = localStorage.getItem('rise_onboard_lastRole'); } catch(e){}
+  const startSlug = (savedRole && ROLES.some(r => r.slug === savedRole)) ? savedRole : ROLES[0].slug;
+  
+  document.getElementById('roleSelect').value = startSlug;
+  handleRoleChange(startSlug);
+}
+
+function populateRoleDropdown() {
+  const sel = document.getElementById('roleSelect');
+  sel.innerHTML = '';
+
+  const branches = [...new Set(ROLES.map(r => r.branch))];
+  branches.forEach(b => {
+    const og = document.createElement('optgroup');
+    og.label = b + ' Branch';
+    ROLES.filter(r => r.branch === b).forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.slug;
+      opt.textContent = r.title;
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  });
+}
+
+function handleRoleChange(slug) {
+  currentRoleSlug = slug;
+  try { localStorage.setItem('rise_onboard_lastRole', slug); } catch(e){}
+  currentRoleObj = ROLES.find(r => r.slug === slug);
+
+  const branchData = BRANCH_COLORS[currentRoleObj.branch] || BRANCH_COLORS.Leadership;
+  document.getElementById('roleAccentBar').style.backgroundColor = branchData.bar;
+  
+  const badge = document.getElementById('roleBranchBadge');
+  badge.textContent = currentRoleObj.branch + ' Branch';
+  badge.className = `text-xs font-bold px-2.5 py-0.5 rounded-full ${branchData.badgeBg}`;
+
+  document.getElementById('tierLabel').textContent = currentRoleObj.tier;
+  document.getElementById('reportsTo').textContent = currentRoleObj.reportsTo;
+
+  const state = loadRoleState(currentRoleObj);
+  document.getElementById('assigneeInput').value = state.candidateName || '';
+  document.getElementById('startDateInput').value = state.startDate || '';
+
+  renderPhases();
+  updateProgressStats();
+}
+
+function saveCandidateInfo() {
+  if (!currentRoleObj) return;
+  const state = loadRoleState(currentRoleObj);
+  state.candidateName = document.getElementById('assigneeInput').value;
+  state.startDate = document.getElementById('startDateInput').value;
+  saveRoleState(currentRoleObj.slug, state);
+}
+
+function renderPhases() {
+  const container = document.getElementById('phasesContainer');
+  container.innerHTML = '';
+
+  if (!currentRoleObj) return;
+  const state = loadRoleState(currentRoleObj);
+  const searchKey = (document.getElementById('taskSearchInput').value || '').toLowerCase().trim();
+
+  currentRoleObj.phases.forEach((phaseTuple, phaseIdx) => {
+    const phaseTitle = phaseTuple[0];
+    const defaultItems = phaseTuple[1];
+
+    const customItemsForPhase = (state.customTasks || []).filter(t => t.phaseIdx === phaseIdx);
+
+    let phaseTotal = defaultItems.length + customItemsForPhase.length;
+    let phaseDone = 0;
+
+    defaultItems.forEach((_, itemIdx) => {
+      if (state.checked[`d_${phaseIdx}_${itemIdx}`]) phaseDone++;
+    });
+
+    customItemsForPhase.forEach((_, cIdx) => {
+      if (state.checked[`c_${phaseIdx}_${cIdx}`]) phaseDone++;
+    });
+
+    const phaseCard = document.createElement('div');
+    phaseCard.className = 'bg-white dark:bg-paper-cardDark border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs transition-all';
+
+    const isCollapsed = collapsedPhases[phaseIdx];
+    const header = document.createElement('div');
+    header.className = 'px-5 py-4 bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-200/60 dark:border-slate-800 flex items-center justify-between cursor-pointer select-none';
+    header.onclick = (e) => {
+      if (e.target.closest('button')) return;
+      collapsedPhases[phaseIdx] = !collapsedPhases[phaseIdx];
+      renderPhases();
+    };
+
+    const phasePct = phaseTotal ? Math.round((phaseDone / phaseTotal) * 100) : 0;
+
+    header.innerHTML = `
+      <div class="flex items-center gap-3">
+        <button class="w-6 h-6 rounded-md bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs text-slate-600 dark:text-slate-300">
+          <i class="fa-solid fa-chevron-${isCollapsed ? 'right' : 'down'}"></i>
+        </button>
+        <div>
+          <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+            ${phaseTitle}
+            ${phasePct === 100 ? '<i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>' : ''}
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">${phaseDone} of ${phaseTotal} completed (${phasePct}%)</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="toggleAllPhaseItems(${phaseIdx}, true)" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 transition">
+          Mark All Done
+        </button>
+      </div>
+    `;
+
+    phaseCard.appendChild(header);
+
+    if (!isCollapsed) {
+      const listEl = document.createElement('div');
+      listEl.className = 'p-3 sm:p-4 space-y-2';
+
+      let renderedCount = 0;
+
+      defaultItems.forEach((itemText, itemIdx) => {
+        const itemKey = `d_${phaseIdx}_${itemIdx}`;
+        const isChecked = !!state.checked[itemKey];
+
+        if (currentFilter === 'completed' && !isChecked) return;
+        if (currentFilter === 'pending' && isChecked) return;
+        if (searchKey && !itemText.toLowerCase().includes(searchKey)) return;
+
+        renderedCount++;
+        listEl.appendChild(createTaskItemRow(itemText, itemKey, isChecked, false, phaseIdx, itemIdx));
+      });
+
+      customItemsForPhase.forEach((cItem, cIdx) => {
+        const itemKey = `c_${phaseIdx}_${cIdx}`;
+        const isChecked = !!state.checked[itemKey];
+
+        if (currentFilter === 'completed' && !isChecked) return;
+        if (currentFilter === 'pending' && isChecked) return;
+        if (searchKey && !cItem.text.toLowerCase().includes(searchKey)) return;
+
+        renderedCount++;
+        listEl.appendChild(createTaskItemRow(cItem.text, itemKey, isChecked, true, phaseIdx, cIdx));
+      });
+
+      if (renderedCount === 0) {
+        listEl.innerHTML = `<div class="text-center py-6 text-xs text-slate-400 italic">No tasks matching current filter or search.</div>`;
+      }
+
+      phaseCard.appendChild(listEl);
+    }
+
+    container.appendChild(phaseCard);
+  });
+}
+
+function createTaskItemRow(itemText, itemKey, isChecked, isCustom, phaseIdx, itemIdx) {
+  const row = document.createElement('div');
+  row.className = `group p-3 rounded-xl border transition-all ${isChecked ? 'bg-slate-50/50 dark:bg-slate-800/20 border-slate-200/40 dark:border-slate-800' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'}`;
+
+  const state = loadRoleState(currentRoleObj);
+  const noteText = state.notes[itemKey] || '';
+
+  row.innerHTML = `
+    <div class="flex items-start gap-3">
+      <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleTaskChecked('${itemKey}', this.checked)" class="mt-1 w-5 h-5 rounded border-slate-300 dark:border-slate-700 accent-slate-900 dark:accent-amber-500 cursor-pointer">
+      
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-2">
+          <p class="text-sm leading-relaxed ${isChecked ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200 font-medium'}">
+            ${itemText}
+            ${isCustom ? '<span class="ml-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">Custom</span>' : ''}
+          </p>
+
+          <div class="flex items-center gap-1 opacity-80 sm:opacity-0 group-hover:opacity-100 transition">
+            <button onclick="toggleNoteBox('${itemKey}')" title="${noteText ? 'Edit Note' : 'Add Note'}" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs">
+              <i class="fa-solid fa-sticky-note ${noteText ? 'text-amber-500' : ''}"></i>
+            </button>
+            ${isCustom ? `
+              <button onclick="deleteCustomTask(${phaseIdx}, ${itemIdx})" title="Delete Custom Task" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            ` : ''}
+          </div>
+        </div>
+
+        ${noteText ? `<div class="mt-2 text-xs text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/30 p-2.5 rounded-lg border border-amber-200/50 dark:border-amber-900/40 flex items-start gap-2">
+          <i class="fa-solid fa-comment text-amber-500 mt-0.5"></i>
+          <span class="whitespace-pre-wrap">${escapeHtml(noteText)}</span>
+        </div>` : ''}
+
+        <div id="noteBox_${itemKey}" class="hidden mt-3 space-y-2">
+          <textarea id="noteInput_${itemKey}" rows="2" placeholder="Add private onboarding notes or links..." class="w-full text-xs p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500">${escapeHtml(noteText)}</textarea>
+          <div class="flex items-center justify-end gap-2">
+            <button onclick="toggleNoteBox('${itemKey}')" class="px-2.5 py-1 text-xs text-slate-500">Cancel</button>
+            <button onclick="saveNote('${itemKey}')" class="px-3 py-1 bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950 rounded-md text-xs font-bold">Save Note</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
+
+  return row;
+}
+
+function escapeHtml(text) {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function toggleTaskChecked(itemKey, isChecked) {
+  if (!currentRoleObj) return;
+  const state = loadRoleState(currentRoleObj);
+  state.checked[itemKey] = isChecked;
+  saveRoleState(currentRoleObj.slug, state);
+
+  updateProgressStats();
+  renderPhases();
+
+  const total = calculateRoleTotalTasks(currentRoleObj, state);
+  const done = calculateRoleDoneTasks(currentRoleObj, state);
+  if (done === total && total > 0 && isChecked) {
+    triggerConfetti();
+    showToast(`🎉 Onboarding complete for ${currentRoleObj.title}!`, 'success');
+  }
+}
+
+function toggleAllPhaseItems(phaseIdx, markAll) {
+  if (!currentRoleObj) return;
+  const state = loadRoleState(currentRoleObj);
+  const phaseTuple = currentRoleObj.phases[phaseIdx];
+  const defaultItems = phaseTuple[1];
+  const customItems = (state.customTasks || []).filter(t => t.phaseIdx === phaseIdx);
+
+  defaultItems.forEach((_, itemIdx) => {
+    state.checked[`d_${phaseIdx}_${itemIdx}`] = markAll;
+  });
+  customItems.forEach((_, cIdx) => {
+    state.checked[`c_${phaseIdx}_${cIdx}`] = markAll;
+  });
+
+  saveRoleState(currentRoleObj.slug, state);
+  updateProgressStats();
+  renderPhases();
+  showToast('Phase marked as complete', 'success');
+}
+
+function toggleNoteBox(itemKey) {
+  const box = document.getElementById(`noteBox_${itemKey}`);
+  if (box) box.classList.toggle('hidden');
+}
+
+function saveNote(itemKey) {
+  if (!currentRoleObj) return;
+  const state = loadRoleState(currentRoleObj);
+  const input = document.getElementById(`noteInput_${itemKey}`);
+  if (input) {
+    state.notes[itemKey] = input.value.trim();
+    saveRoleState(currentRoleObj.slug, state);
+    renderPhases();
+    showToast('Note saved successfully', 'success');
+  }
+}
+
+function updateProgressStats() {
+  if (!currentRoleObj) return;
+  const state = loadRoleState(currentRoleObj);
+  const total = calculateRoleTotalTasks(currentRoleObj, state);
+  const done = calculateRoleDoneTasks(currentRoleObj, state);
+  const pct = total ? Math.round((done / total) * 100) : 0;
+
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressCount').textContent = `${done} of ${total} (${pct}%)`;
+
+  const badge = document.getElementById('completionBadge');
+  if (pct === 100 && total > 0) {
+    badge.textContent = 'Complete';
+    badge.className = 'text-xs font-sans px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold';
+  } else if (pct > 0) {
+    badge.textContent = 'In Progress';
+    badge.className = 'text-xs font-sans px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 font-bold';
+  } else {
+    badge.textContent = 'Not Started';
+    badge.className = 'text-xs font-sans px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 font-bold';
+  }
+}
+
+function calculateRoleTotalTasks(roleObj, state) {
+  let count = 0;
+  roleObj.phases.forEach(p => count += p[1].length);
+  count += (state.customTasks || []).length;
+  return count;
+}
+
+function calculateRoleDoneTasks(roleObj, state) {
+  let done = 0;
+  roleObj.phases.forEach((p, pIdx) => {
+    p[1].forEach((_, iIdx) => {
+      if (state.checked[`d_${pIdx}_${iIdx}`]) done++;
+    });
+  });
+  (state.customTasks || []).forEach((cTask, cIdx) => {
+    if (state.checked[`c_${cTask.phaseIdx}_${cIdx}`]) done++;
+  });
+  return done;
+}
+
+function setFilter(filterType) {
+  currentFilter = filterType;
+  ['All', 'Pending', 'Completed'].forEach(f => {
+    const btn = document.getElementById(`filter${f}Btn`);
+    if (f.toLowerCase() === filterType) {
+      btn.className = 'px-2.5 py-1 rounded-md font-medium transition bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950';
+    } else {
+      btn.className = 'px-2.5 py-1 rounded-md font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition';
+    }
+  });
+  renderPhases();
+}
+
+function openAddTaskModal() {
+  const sel = document.getElementById('modalPhaseSelect');
+  sel.innerHTML = '';
+  currentRoleObj.phases.forEach((p, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = p[0];
+    sel.appendChild(opt);
+  });
+  document.getElementById('modalTaskInput').value = '';
+  document.getElementById('addTaskModal').classList.remove('hidden');
+}
+
+function closeAddTaskModal() {
+  document.getElementById('addTaskModal').classList.add('hidden');
+}
+
+function submitCustomTask() {
+  const phaseIdx = parseInt(document.getElementById('modalPhaseSelect').value);
+  const text = document.getElementById('modalTaskInput').value.trim();
+
+  if (!text) {
+    showToast('Please enter a task description', 'error');
+    return;
+  }
+
+  const state = loadRoleState(currentRoleObj);
+  if (!state.customTasks) state.customTasks = [];
+  state.customTasks.push({ phaseIdx, text });
+
+  saveRoleState(currentRoleObj.slug, state);
+  closeAddTaskModal();
+  renderPhases();
+  updateProgressStats();
+  showToast('Custom task added', 'success');
+}
+
+function deleteCustomTask(phaseIdx, customIdx) {
+  const state = loadRoleState(currentRoleObj);
+  state.customTasks.splice(customIdx, 1);
+  saveRoleState(currentRoleObj.slug, state);
+  renderPhases();
+  updateProgressStats();
+  showToast('Custom task removed', 'success');
+}
+
+function confirmResetRole() {
+  document.getElementById('confirmModalTitle').textContent = 'Reset Checklist?';
+  document.getElementById('confirmModalDesc').textContent = `Are you sure you want to uncheck all items for ${currentRoleObj.title}? Notes will be retained.`;
+  
+  const actionBtn = document.getElementById('confirmModalActionBtn');
+  actionBtn.onclick = () => {
+    const state = loadRoleState(currentRoleObj);
+    state.checked = {};
+    saveRoleState(currentRoleObj.slug, state);
+    closeConfirmModal();
+    renderPhases();
+    updateProgressStats();
+    showToast('Checklist reset successfully', 'success');
+  };
+
+  document.getElementById('confirmModal').classList.remove('hidden');
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirmModal').classList.add('hidden');
+}
+
+function switchTab(tab) {
+  const checklistView = document.getElementById('checklistView');
+  const overviewView = document.getElementById('overviewView');
+  const btnChecklist = document.getElementById('tabChecklistBtn');
+  const btnOverview = document.getElementById('tabOverviewBtn');
+
+  if (tab === 'checklist') {
+    checklistView.classList.remove('hidden');
+    overviewView.classList.add('hidden');
+    btnChecklist.className = 'px-3 sm:px-4 py-1.5 rounded-lg transition-all text-slate-900 dark:text-white bg-white dark:bg-slate-700 shadow-sm';
+    btnOverview.className = 'px-3 sm:px-4 py-1.5 rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+  } else {
+    checklistView.classList.add('hidden');
+    overviewView.classList.remove('hidden');
+    btnOverview.className = 'px-3 sm:px-4 py-1.5 rounded-lg transition-all text-slate-900 dark:text-white bg-white dark:bg-slate-700 shadow-sm';
+    btnChecklist.className = 'px-3 sm:px-4 py-1.5 rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+    renderOverviewDashboard();
+  }
+}
+
+function filterOverviewBranch(branch) {
+  overviewBranchFilter = branch;
+  ['all', 'Leadership', 'Communications', 'Creative', 'Capture', 'Online'].forEach(b => {
+    const btn = document.getElementById(`ovBranchBtn-${b}`);
+    if (btn) {
+      if (b === branch) {
+        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-950';
+      } else {
+        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300';
+      }
+    }
+  });
+  renderOverviewDashboard();
+}
+
+function renderOverviewDashboard() {
+  const grid = document.getElementById('overviewCardsGrid');
+  grid.innerHTML = '';
+
+  let activeCount = 0;
+  let totalTasksDoneSum = 0;
+  let totalTasksPossibleSum = 0;
+
+  const filteredRoles = ROLES.filter(r => overviewBranchFilter === 'all' || r.branch === overviewBranchFilter);
+
+  filteredRoles.forEach(roleObj => {
+    const state = loadRoleState(roleObj);
+    const total = calculateRoleTotalTasks(roleObj, state);
+    const done = calculateRoleDoneTasks(roleObj, state);
+    const pct = total ? Math.round((done / total) * 100) : 0;
+
+    totalTasksDoneSum += done;
+    totalTasksPossibleSum += total;
+
+    if (done > 0 || state.candidateName) activeCount++;
+
+    const branchData = BRANCH_COLORS[roleObj.branch] || BRANCH_COLORS.Leadership;
+
+    const card = document.createElement('div');
+    card.className = 'bg-white dark:bg-paper-cardDark border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition flex flex-col justify-between';
+
+    card.innerHTML = `
+      <div class="space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${branchData.badgeBg}">${roleObj.branch}</span>
+          <span class="text-xs font-bold ${pct === 100 ? 'text-emerald-500' : 'text-slate-500'}">${pct}%</span>
+        </div>
+
+        <div>
+          <h3 class="font-serif font-bold text-base text-slate-900 dark:text-white leading-snug">${roleObj.title}</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            ${state.candidateName ? `<i class="fa-solid fa-user text-amber-500 mr-1"></i><b>${escapeHtml(state.candidateName)}</b>` : 'Unassigned'}
+          </p>
+        </div>
+
+        <div class="space-y-1">
+          <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full bg-slate-900 dark:bg-amber-500 transition-all duration-300" style="width: ${pct}%"></div>
+          </div>
+          <p class="text-[11px] text-slate-400">${done} of ${total} tasks finished</p>
+        </div>
+      </div>
+
+      <div class="pt-4 mt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+        <span class="text-[11px] text-slate-400">Reports: ${roleObj.reportsTo}</span>
+        <button onclick="jumpToRole('${roleObj.slug}')" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-slate-800 dark:text-slate-200 transition">
+          Open <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  document.getElementById('statTotalRoles').textContent = ROLES.length;
+  document.getElementById('statActiveCount').textContent = activeCount;
+  document.getElementById('statTotalTasksDone').textContent = totalTasksDoneSum;
+  
+  const overallPct = totalTasksPossibleSum ? Math.round((totalTasksDoneSum / totalTasksPossibleSum) * 100) : 0;
+  document.getElementById('statOverallPct').textContent = overallPct + '%';
+}
+
+function jumpToRole(slug) {
+  switchTab('checklist');
+  document.getElementById('roleSelect').value = slug;
+  handleRoleChange(slug);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function copyFormattedSummary() {
+  if (!currentRoleObj) return;
+  const state = loadRoleState(currentRoleObj);
+  const total = calculateRoleTotalTasks(currentRoleObj, state);
+  const done = calculateRoleDoneTasks(currentRoleObj, state);
+  const pct = total ? Math.round((done / total) * 100) : 0;
+
+  let text = `📋 *Rise Church Onboarding Status*\n`;
+  text += `*Role:* ${currentRoleObj.title}\n`;
+  if (state.candidateName) text += `*Candidate:* ${state.candidateName}\n`;
+  if (state.startDate) text += `*Start Date:* ${state.startDate}\n`;
+  text += `*Progress:* ${done}/${total} tasks (${pct}%)\n\n`;
+
+  currentRoleObj.phases.forEach((phaseTuple, pIdx) => {
+    text += `*${phaseTuple[0]}:*\n`;
+    phaseTuple[1].forEach((item, iIdx) => {
+      const isChecked = state.checked[`d_${pIdx}_${iIdx}`];
+      text += ` ${isChecked ? '✅' : '⏹️'} ${item}\n`;
+    });
+    text += `\n`;
+  });
+
+  copyToClipboard(text);
+  showToast('Formatted summary copied to clipboard!', 'success');
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text);
+  } else {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+  }
+}
+
+function exportAllData() {
+  const exportObject = {};
+  ROLES.forEach(r => {
+    exportObject[r.slug] = loadRoleState(r);
+  });
+
+  const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Rise_Church_Onboarding_Backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  showToast('Backup file downloaded', 'success');
+}
+
+function importAllData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      Object.keys(imported).forEach(slug => {
+        saveRoleState(slug, imported[slug]);
+      });
+      showToast('Data restored successfully!', 'success');
+      if (currentRoleSlug) handleRoleChange(currentRoleSlug);
+      renderOverviewDashboard();
+    } catch(err) {
+      showToast('Invalid backup file', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function setupTheme() {
+  if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+    document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-400';
+  } else {
+    document.documentElement.classList.remove('dark');
+    document.getElementById('themeIcon').className = 'fa-solid fa-moon text-slate-600';
+  }
+}
+
+function toggleDarkMode() {
+  if (document.documentElement.classList.contains('dark')) {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+    document.getElementById('themeIcon').className = 'fa-solid fa-moon text-slate-600';
+  } else {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+    document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-400';
+  }
+}
+
+function triggerConfetti() {
+  if (typeof confetti === 'function') {
+    confetti({
+      particleCount: 80,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  }
+}
+
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  const toastMsg = document.getElementById('toastMsg');
+  const toastIcon = document.getElementById('toastIcon');
+
+  toastMsg.textContent = msg;
+  if (type === 'success') {
+    toastIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-base';
+  } else {
+    toastIcon.className = 'fa-solid fa-circle-exclamation text-rose-400 text-base';
+  }
+
+  toast.classList.remove('translate-y-20', 'opacity-0');
+  toast.classList.add('translate-y-0', 'opacity-100');
+
+  setTimeout(() => {
+    toast.classList.add('translate-y-20', 'opacity-0');
+    toast.classList.remove('translate-y-0', 'opacity-100');
+  }, 2500);
+}
+
+window.onload = function() {
+  initApp();
+};
+</script>
+</body>
+</html>
